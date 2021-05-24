@@ -70,7 +70,7 @@
                 var dPrevCh = word.charAt(idx-2);
                 switch(word.charAt(idx)) {
                     case 'a': 
-                        if(skipIfNextIs(nextCh, "aiueoyw")) continue; 
+                        if(skipIfNextIs(nextCh, "aiueoyw,x")) continue; 
                         else result += decideForA(prevCh, nextCh, dNextCh); break;
                     case 'b': result += "ㅂ"; break;
                     case 'c': 
@@ -78,7 +78,7 @@
                         else result += "ㅋ"; break;
                     case 'd': result += "ㄷ"; break;
                     case 'e': 
-                        if(skipIfNextIs(nextCh, "aiueoyw")) continue; 
+                        if(skipIfNextIs(nextCh, "aiueoyw,x")) continue; 
                         else result += decideForE(prevCh, nextCh, dNextCh); break;
                     case 'f': result += "ㅍ"; break;
                     case 'g': result += decideForG(prevCh,nextCh); break;
@@ -87,7 +87,7 @@
                         else result += decideForH(dPrevCh, prevCh, nextCh); break;
                     case 'i':
                         if(skipIfNextIs(nextCh, "aiueo")) continue; 
-                        else result += decideForI(prevCh, nextCh); break;
+                        else result += decideForI(dPrevCh, prevCh, nextCh); break;
                     case 'j': result += "ㅈ"; break;
                     case 'k': result += "ㅋ"; break;
                     case 'l': 
@@ -117,8 +117,10 @@
                         if(skipIfNextIs(nextCh, "aiueo")) continue; 
                         else result += decideForU(prevCh, nextCh); break;
                     case 'v': result += "ㅂ"; break;
-                    case 'w': result += decideForW(prevCh, nextCh); break;
-                    case 'x': result += "ㅅ"; break;
+                    case 'w': 
+                        if(skipIfNextIs(nextCh, "aiueo")) continue; 
+                        else result += decideForW(prevCh, nextCh); break;
+                    case 'x': result += decideForX(prevCh, nextCh); break;
                     case 'y': 
                         if(skipIfNextIs(nextCh, "ae")) continue; 
                         else result += decideForY(dPrevCh, prevCh, nextCh); break;
@@ -147,12 +149,22 @@
                 } else if ("q".includes(nextCh)) {
                     decided = 'ㅓ';
                 }
+            } else if ("w".includes(prevCh)) {
+                decided = 'ㅘ';
             } else if ("q".includes(prevCh)) {
                 decided = 'ㅓ';
             } else if ("s".includes(prevCh)) {
                 decided = 'ㅐ';
             } else if ("e".includes(prevCh)) {
-                decided = 'ㅔ';
+                if ("r" == nextCh) {
+                    if ("n" == dNextCh) {
+                        decided = 'ㅓ'
+                    } else {
+                        decided = 'ㅣ어'
+                    }
+                } else {
+                    decided = 'ㅔ';
+                }
             } else if ("y".includes(prevCh)) {
                 decided = 'ㅑ';
             } else if ("bcnst".includes(prevCh)) {
@@ -172,6 +184,10 @@
                 } else {
                     decided = 'ㅏ';
                 }
+            } else if ("w".includes(prevCh)) {
+                decided = 'ㅟ'
+            } else if ("a".includes(prevCh)) {
+                decided = 'ㅐ';
             } else if ("e".includes(prevCh)) {
                 decided = 'ㅣ';
             } else if ("u".includes(prevCh)) {
@@ -188,22 +204,29 @@
 
         function decideForO(dPrevCh, prevCh, nextCh) {
             var decided = 'ㅗ';
-            if ("" == prevCh) {
-                if ("bc".includes(nextCh)) {
-                    decided = 'ㅐ';
-                } else {
-                    decided = 'ㅏ';
+            if ("" != prevCh) {
+                if ("w".includes(prevCh)) {
+                decided = 'ㅝ'
+                } else if ("a".includes(prevCh)) {
+                    if ("y" == dPrevCh) {
+                        decided = 'ㅑ오';
+                    } else {
+                        decided = 'ㅏ오';
+                    }
+                } else if ("e".includes(prevCh)) {
+                    if ("y" == dPrevCh) {
+                        decided = 'ㅕ';
+                    } else {
+                        decided = 'ㅣ오';
+                    }
+                } else if ("i".includes(prevCh)) {
+                    decided = 'ㅏ이오';
+                } else if ("o".includes(prevCh)) {
+                    decided = 'ㅜ';
+                } else if ("y".includes(prevCh)) {
+                    decided = 'ㅛ';
                 }
-            } else if ("a".includes(prevCh)) {
-                decided = 'ㅏ오';
-            } else if ("i".includes(prevCh)) {
-                decided = 'ㅏ이오';
-            } else if ("o".includes(prevCh)) {
-                decided = 'ㅜ';
-            } else if ("y".includes(prevCh)) {
-                decided = 'ㅛ';
             }
-            
             return decided;
         }
 
@@ -217,10 +240,22 @@
             return decided;
         }
 
-        function decideForI(prevCh, nextCh) {
+        function decideForI(dPrevCh, prevCh, nextCh) {
             var decided = 'ㅣ';
             if ("a" == prevCh) {
                 decided = 'ㅔ이';
+            } else if ("u" == prevCh) {
+                if ("e" == dPrevCh) {
+                    decided = 'ㅢ'
+                } else {
+                    if ("n".includes(nextCh)) {
+                        decided = 'ㅟ';
+                    } else {
+                        decided = 'ㅏ이'
+                    }
+                }
+            } else if ("w" == prevCh) {
+                decided = 'ㅟ'
             }
             return decided;
         }
@@ -269,7 +304,7 @@
             var decided = 'ㄹ';
             if ("" == nextCh) {
                 if ("e" == prevCh) {
-                    decided = '얼';
+                    decided = '';
                 } else {
                     decided = '~';
                 }
@@ -281,6 +316,8 @@
             var decided = 'ㄱ';
             if ("n" == prevCh) {
                 decided = 'ㅇ';
+            } else if ("i" == nextCh) {
+                decided = 'ㅈ';
             }
             return decided;
         }
@@ -300,7 +337,25 @@
                     decided = 'ㅋ';
                 }
             } else if ("t" == prevCh) {
-                decided = 'ㅊ';
+                if ("d" == dPrevCh) {
+                    decided = 'ㄷ'
+                } else if ("r" == dPrevCh) {
+                    decided = 'ㅅ';
+                } else {
+                    decided = 'ㅌㅅ';
+                }
+            }
+            return decided;
+        }
+
+        function decideForX(prevCh, nextCh) {
+            var decided = 'ㅅ';
+            if ("ae".includes(prevCh)) {
+                if ("i" == nextCh) {
+                    decided = 'ㅣ그ㅈ';
+                } else {
+                    decided = 'ㅔㄱㅅ';
+                }
             }
             return decided;
         }
