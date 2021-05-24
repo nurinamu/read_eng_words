@@ -1,0 +1,315 @@
+<html>
+
+<head>
+    <title>의진이 영어 발음 연습장</title>
+    <style>
+        .eng {
+            color: #336699;
+            font-size: 120pt;
+            height:250px;
+            text-align: center;
+        }
+        .kor {
+            color: #999999;
+            font-size: 80pt;
+            height:200px;
+            text-align: center;
+        }
+        .topTitle {
+            color: #d054e9;
+            font-size: 40pt;
+            height:200px;
+            text-align: center;
+            width: 100%;
+        }
+        #inputLayer {
+            width: 30%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
+</head>
+<body>
+
+    <div id = "titleLayer" class="topTitle">
+        의진이 영어 읽기 프로그램
+    </div>
+
+    <div id="typedLayer" class="eng">
+        
+    </div>
+    <div id="parsedLayer" class="kor">
+        
+    </div>
+
+    <div id="inputLayer">
+        <input type="text" class="inputEng" id="inputWord" oninput="javascript:displayToTypedLayer();" onkeydown="keyEvent();">
+        <input type="button" class="inputBtn" id="inputBtn" value="도전" onclick="javascript:parseWords();">
+    </div>
+    
+
+
+    <script>
+        function keyEvent() {
+            switch(window.event.keyCode) {
+                case 8: 
+                document.getElementById("parsedLayer").innerText='';
+                break;
+                case 13: parseWords(); break;
+            }
+        }
+
+        function parseWords() {
+            var word = document.getElementById("inputWord").value.toLowerCase();
+            var result = "";
+            for (idxStr in word) {
+                var idx = parseInt(idxStr);
+                var nextCh = word.charAt(idx+1);
+                var dNextCh = word.charAt(idx+2);
+                var prevCh = word.charAt(idx-1);
+                var dPrevCh = word.charAt(idx-2);
+                switch(word.charAt(idx)) {
+                    case 'a': 
+                        if(skipIfNextIs(nextCh, "aiueoyw")) continue; 
+                        else result += decideForA(prevCh, nextCh, dNextCh); break;
+                    case 'b': result += "ㅂ"; break;
+                    case 'c': 
+                        if(skipIfNextIs(nextCh, "h")) continue; 
+                        else result += "ㅋ"; break;
+                    case 'd': result += "ㄷ"; break;
+                    case 'e': 
+                        if(skipIfNextIs(nextCh, "aiueoyw")) continue; 
+                        else result += decideForE(prevCh, nextCh, dNextCh); break;
+                    case 'f': result += "ㅍ"; break;
+                    case 'g': result += decideForG(prevCh,nextCh); break;
+                    case 'h':
+                        if(skipIfNextIs(nextCh, "b")) continue; 
+                        else result += decideForH(dPrevCh, prevCh, nextCh); break;
+                    case 'i':
+                        if(skipIfNextIs(nextCh, "aiueo")) continue; 
+                        else result += decideForI(prevCh, nextCh); break;
+                    case 'j': result += "ㅈ"; break;
+                    case 'k': result += "ㅋ"; break;
+                    case 'l': 
+                        if(skipIfNextIs(nextCh, "k")) continue; 
+                        else result += "ㄹ"; break;
+                    case 'm': result += "ㅁ"; break;
+                    case 'n': 
+                        if(skipIfNextIs(nextCh, "g")) continue; 
+                        else result += decideForN(dPrevCh, prevCh, nextCh); break;
+                    case 'o': 
+                        if(skipIfNextIs(nextCh, "aiueow,n")) continue; 
+                        else result += decideForO(dPrevCh, prevCh, nextCh); break;
+                    case 'p': 
+                        if(skipIfNextIs(nextCh, "p")) continue; 
+                        else result += "ㅍ"; break;
+                    case 'q': result += "ㅋ"; break;
+                    case 'r': 
+                        if(skipIfNextIs(nextCh, "r")) continue; 
+                        else result += decideForR(prevCh, nextCh); break;
+                    case 's': 
+                        if(skipIfNextIs(nextCh, "h")) continue; 
+                        else result += "ㅅ"; break;
+                    case 't': 
+                        if(skipIfNextIs(nextCh, "h")) continue; 
+                        else result += decideForT(prevCh, nextCh, dNextCh); break;
+                    case 'u':
+                        if(skipIfNextIs(nextCh, "aiueo")) continue; 
+                        else result += decideForU(prevCh, nextCh); break;
+                    case 'v': result += "ㅂ"; break;
+                    case 'w': result += decideForW(prevCh, nextCh); break;
+                    case 'x': result += "ㅅ"; break;
+                    case 'y': 
+                        if(skipIfNextIs(nextCh, "ae")) continue; 
+                        else result += decideForY(dPrevCh, prevCh, nextCh); break;
+                    case 'z': result += "ㅈ"; break;
+                }
+            }
+            document.getElementById("parsedLayer").innerText = result;
+        }
+
+        function skipIfNextIs(nextCh, str) {
+            if (nextCh == undefined || nextCh == "") return false;
+            return str.includes(nextCh);
+        }
+
+        function isAIUEOY(ch) {
+            return "aiueoy".includes(ch);
+        }
+
+        function decideForA(prevCh, nextCh, dNextCh) {
+            var decided = 'ㅏ';
+            if ("" == prevCh) {
+                if ("c".includes(nextCh) && !"c".includes(dNextCh)) {
+                    decided = 'ㅓ';
+                } else if ("bcdns".includes(nextCh) && !isAIUEOY(dNextCh)) {
+                    decided = 'ㅐ';
+                } else if ("q".includes(nextCh)) {
+                    decided = 'ㅓ';
+                }
+            } else if ("q".includes(prevCh)) {
+                decided = 'ㅓ';
+            } else if ("s".includes(prevCh)) {
+                decided = 'ㅐ';
+            } else if ("e".includes(prevCh)) {
+                decided = 'ㅔ';
+            } else if ("y".includes(prevCh)) {
+                decided = 'ㅑ';
+            } else if ("bcnst".includes(prevCh)) {
+                if ("kv".includes(nextCh)) {
+                    decided = "ㅔ이";
+                } 
+            }
+            
+            return decided;
+        }
+
+        function decideForE(prevCh, nextCh, dNextCh) {
+            var decided = 'ㅔ';
+            if ("" == prevCh) {
+                if ("bc".includes(nextCh)) {
+                    decided = 'ㅐ';
+                } else {
+                    decided = 'ㅏ';
+                }
+            } else if ("e".includes(prevCh)) {
+                decided = 'ㅣ';
+            } else if ("u".includes(prevCh)) {
+                decided = 'ㅜ';
+            } else if ("y".includes(prevCh)) {
+                decided = 'ㅖ';
+            } else if ("r" == nextCh && "" == dNextCh) {
+                decided = "ㅓ";
+            } else if ("" == nextCh) {
+                decided = '';
+            }
+            return decided;
+        }
+
+        function decideForO(dPrevCh, prevCh, nextCh) {
+            var decided = 'ㅗ';
+            if ("" == prevCh) {
+                if ("bc".includes(nextCh)) {
+                    decided = 'ㅐ';
+                } else {
+                    decided = 'ㅏ';
+                }
+            } else if ("a".includes(prevCh)) {
+                decided = 'ㅏ오';
+            } else if ("i".includes(prevCh)) {
+                decided = 'ㅏ이오';
+            } else if ("o".includes(prevCh)) {
+                decided = 'ㅜ';
+            } else if ("y".includes(prevCh)) {
+                decided = 'ㅛ';
+            }
+            
+            return decided;
+        }
+
+        function decideForU(prevCh, nextCh) {
+            var decided = 'ㅜ';
+            if ("" == prevCh) {
+                decided = 'ㅠ';
+            } else if ("o" == prevCh) {
+                decided = 'ㅏ우';
+            }
+            return decided;
+        }
+
+        function decideForI(prevCh, nextCh) {
+            var decided = 'ㅣ';
+            if ("a" == prevCh) {
+                decided = 'ㅔ이';
+            }
+            return decided;
+        }
+
+        function decideForW(prevCh, nextCh) {
+            var decided = '위';
+            if ("ao".includes(prevCh)) {
+                decided = 'ㅗ우';
+            } else if ("e" == prevCh) {
+                decided = 'ㅠ';
+            }
+            return decided;
+        }
+
+        function decideForY(dPrevCh, prevCh, nextCh) {
+            var decided = 'ㅣ';
+            if ("r".includes(prevCh)) {
+                if ("r" != dPrevCh) {
+                    decided = 'ㅏ이';
+                }
+            } else if ("ae".includes(prevCh)) {
+                decided = 'ㅔ이';
+            }
+            
+            return decided;
+        }
+
+        // 자음
+        function decideForT(prevCh, nextCh, dNextCh) {
+            var decided = 'ㅌ';
+            if ("i" == nextCh && "o" == dNextCh) {
+                decided = 'ㅅ';
+            }
+            return decided;
+        }
+
+        function decideForN(dPrevCh, prevCh, nextCh) {
+            var decided = 'ㄴ';
+            if ("i" == dPrevCh && "o" == prevCh) {
+                decided = 'ㅕㄴ';
+            }
+            return decided;
+        }
+
+        function decideForR(prevCh, nextCh) {
+            var decided = 'ㄹ';
+            if ("" == nextCh) {
+                if ("e" == prevCh) {
+                    decided = '얼';
+                } else {
+                    decided = '~';
+                }
+            }
+            return decided;
+        }
+
+        function decideForG(prevCh, nextCh) {
+            var decided = 'ㄱ';
+            if ("n" == prevCh) {
+                decided = 'ㅇ';
+            }
+            return decided;
+        }
+
+        function decideForH(dPrevCh, prevCh, nextCh) {
+            var decided = 'ㅎ';
+            if ("s" == prevCh) {
+                decided = '쉬';
+            } else if ("c" == prevCh) {
+                if ("" == nextCh) {
+                    decided = '취';
+                } else if ("s" == dPrevCh) {
+                    decided = 'ㅋ';
+                } else if (isAIUEOY(nextCh)) {
+                    decided = 'ㅊ';
+                } else {
+                    decided = 'ㅋ';
+                }
+            } else if ("t" == prevCh) {
+                decided = 'ㅊ';
+            }
+            return decided;
+        }
+
+        function displayToTypedLayer() {
+            var word = document.getElementById("inputWord").value;
+            document.getElementById("typedLayer").innerText = word;
+        }
+        document.getElementById("inputWord").focus();
+    </script>
+</body>
+</html>
